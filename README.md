@@ -11,3 +11,6 @@ Low(0)	Low(0)	Motor OFF
 High(1)	Low(0)	Forward
 Low(0)	High(1)	Backward
 High(1)	High(1)	Motor OFF
+
+test
+
