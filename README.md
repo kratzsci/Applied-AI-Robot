@@ -4,7 +4,7 @@ Self-driving robot with AI controls
 File sturcture:
 motors.py - manages the motors for movement of the robot
 
-L298N motor controller
+# L298N motor controller
 
 | Input1  | Input2  | Spinning Direction |
 | ------- | ------- | ------------------ |
