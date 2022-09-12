@@ -15,6 +15,7 @@
 #endif
 
 BluetoothSerial SerialBT;
+float number = 0.0;
 
 void setup() {
   Serial.begin(115200);
@@ -23,11 +24,15 @@ void setup() {
 }
 
 void loop() {
-  if (Serial.available()) {
-    SerialBT.write(Serial.read());
-  }
   if (SerialBT.available()) {
-    Serial.write(SerialBT.read());
+    if(number <= 5.0){
+      SerialBT.write(number);
+      delay(100);
+      number = number + 0.1;
+    }
+    else {
+      number = 0.0;
+    }
   }
   delay(20);
 }
