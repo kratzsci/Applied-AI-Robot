@@ -1,89 +1,44 @@
+import RPi.GPIO as GPIO  # import gpio
+import time      #import time library
+import spidev
+from lib_nrf24 import NRF24   #import NRF24 library
 
-# demo.py
-# Kevin McAleer
-# test the nRF24L01 modules to send and receive data
-# Watch this video for more information about that library https://www.youtube.com/watch?v=aP8rSN-1eT0
+GPIO.setmode(GPIO.BCM)       # set the gpio mode
 
-from nrf24l01 import NRF24L01
-from machine import SPI, Pin
-from time import sleep
-import struct
+  # set the pipe address. this address shoeld be entered on the receiver alo
+pipes = [[0xE0, 0xE0, 0xF1, 0xF1, 0xE0], [0xF1, 0xF1, 0xF0, 0xF0, 0xE0]]
+radio = NRF24(GPIO, spidev.SpiDev())   # use the gpio pins
+radio.begin(0, 25)   # start the radio and set the ce,csn pin ce= GPIO08, csn= GPIO25
+radio.setPayloadSize(32)  #set the payload size as 32 bytes
+radio.setChannel(0x76) # set the channel as 76 hex
+radio.setDataRate(NRF24.BR_1MBPS)    # set radio data rate
+radio.setPALevel(NRF24.PA_MIN)  # set PA level
 
-csn = Pin(14, mode=Pin.OUT, value=1) # Chip Select Not
-ce = Pin(17, mode=Pin.OUT, value=0)  # Chip Enable
-led = Pin(25, Pin.OUT)               # Onboard LED
-payload_size = 20
 
-# Define the channel or 'pipes' the radios use.
-# switch round the pipes depending if this is a sender or receiver pico
+radio.setAutoAck(True)       # set acknowledgement as true 
+radio.enableDynamicPayloads()
+radio.enableAckPayload()
 
-# role = "send"
-role = "receive"
 
-if role == "send":
-    send_pipe = b"\xe1\xf0\xf0\xf0\xf0"
-    receive_pipe = b"\xd2\xf0\xf0\xf0\xf0"
-else:
-    send_pipe = b"\xd2\xf0\xf0\xf0\xf0"
-    receive_pipe = b"\xe1\xf0\xf0\xf0\xf0"
+radio.openWritingPipe(pipes[0])     # open the defined pipe for writing
+radio.printDetails()      # print basic detals of radio
 
-def setup():
-    print("Initialising the nRF24L0+ Module")
-    nrf = NRF24L01(SPI(0), csn, ce, payload_size=payload_size)
-    nrf.open_tx_pipe(send_pipe)
-    nrf.open_rx_pipe(1, receive_pipe)
-    nrf.start_listening()
-    return nrf
+sendMessage = list("Hi..Arduino UNO")  #the message to be sent
 
-def flash_led(times:int=None):
-    ''' Flashed the built in LED the number of times defined in the times parameter '''
-    for _ in range(times):
-        led.value(1)
-        sleep(0.01)
-        led.value(0)
-        sleep(0.01)
-
-def send(nrf, msg):
-    print("sending message.", msg)
-    nrf.stop_listening()
-    for n in range(len(msg)):
-        try:
-            encoded_string = msg[n].encode()
-            byte_array = bytearray(encoded_string)
-            buf = struct.pack("s", byte_array)
-            nrf.send(buf)
-            # print(role,"message",msg[n],"sent")
-            flash_led(1)
-        except OSError:
-            print(role,"Sorry message not sent")
-    nrf.send("\n")
-    nrf.start_listening()
-
-# main code loop
-flash_led(1)
-nrf = setup()
-nrf.start_listening()
-msg_string = ""
+while len(sendMessage) < 32:    
+    sendMessage.append(0)
 
 while True:
-    msg = ""
-    if role == "send":
-        send(nrf, "Yello world")
-        send(nrf, "Test")
-    else:
-        # Check for Messages
-        if nrf.any():
-            package = nrf.recv()          
-            message = struct.unpack("s",package)
-            msg = message[0].decode()
-            flash_led(1)
+    start = time.time()      #start the time for checking delivery time
+    radio.write(sendMessage)   # just write the message to radio
+    print("Sent the message: {}".format(sendMessage))  # print a message after succesfull send
+    radio.startListening()        # Start listening the radio
+   
+    while not radio.available(0):
+        time.sleep(1/100)
+        if time.time() - start > 2:
+            print("Timed out.")  # print errror message if radio disconnected or not functioning anymore
+            break
 
-            # Check for the new line character
-            if (msg == "\n") and (len(msg_string) <= 20):
-                print("full message",msg_string, msg)
-                msg_string = ""
-            else:
-                if len(msg_string) <= 20:
-                    msg_string = msg_string + msg
-                else:
-                    msg_string = ""
+    radio.stopListening()     # close radio
+    time.sleep(3)  # give delay of 3 seconds
