@@ -5,7 +5,7 @@ from lib_nrf24 import NRF24   #import NRF24 library
 
 GPIO.setmode(GPIO.BCM)       # set the gpio mode
 
-  # set the pipe address. this address shoeld be entered on the receiver alo
+# set the pipe address. this address shoeld be entered on the receiver alo
 pipes = [[0xE0, 0xE0, 0xF1, 0xF1, 0xE0], [0xF1, 0xF1, 0xF0, 0xF0, 0xE0]]
 radio = NRF24(GPIO, spidev.SpiDev())   # use the gpio pins
 radio.begin(0, 25)   # start the radio and set the ce,csn pin ce= GPIO08, csn= GPIO25
