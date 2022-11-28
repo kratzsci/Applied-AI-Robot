@@ -1,67 +1,43 @@
-* Simple ESP32 Web Server  
-  *  The ESP32 Wifi is configured as Access Point.  
-  *    
-  */  
  #include <WiFi.h>  
-   
- #define BLUE_LED  25  
- #define GREEN_LED  26  
- #define RED_LED   27  
-   
+
  // Create the objects for server and client  
  WiFiServer server(80);  
  WiFiClient client;  
    
- const char* ssid   = "ESP32-AP-WebServer";// This is the SSID that ESP32 will broadcast  
- const char* password = "12345678";     // password should be atleast 8 characters to make it work  
+ const char* ssid   = "AI-ASL-BOT";// This is the SSID that ESP32 will broadcast  
+ const char* password = "JohPhi";     // password should be atleast 8 characters to make it work  
    
  // Create the global variable  
  String http;  
  String bluLedState = "off";  
  String grnLedState = "off";  
- String redLedState = "off";  
-   
+ String redLedState = "off";
+ String drivingState = "STOP";
+ String turningState = "STRAIGHT";  
+  
+  // Motor A
+  int motor1Pin1 = 15; 
+  int motor1Pin2 = 2;
+  int motor2Pin1 = 4;
+  int motor2Pin2 = 5;  
+  
  void setup() {  
   Serial.begin(115200);  
-  pinMode(BLUE_LED, OUTPUT);  
-  pinMode(GREEN_LED, OUTPUT);  
-  pinMode(RED_LED, OUTPUT);  
-  digitalWrite(BLUE_LED, LOW);  
-  digitalWrite(GREEN_LED, LOW);  
-  digitalWrite(RED_LED, LOW);  
   Serial.print("Connecting to ");  
   Serial.println(ssid);  
    
-  // Create the ESP32 access point  
-  /*  
-   * Alternative:  
-   * softAP(const char* ssid,  
-   *     const char* password,  
-   *     int channel,  
-   *     int ssid_hidden,   
-   *     int max_connection  
-   *       
-   *     where:  
-   *      ssid - this is the SSID that will be broadcast by ESP32  
-   *          maximum of 63 characters  
-   *      password - this is the password to connect to ESP32  
-   *          minimum of 8 characters to function  
-   *          Put NULL to make it open to public  
-   *      channel - wifi channels (ranging from 1 to 13)  
-   *      ssid_hidden - sets the SSID as broadcast or hidden  
-   *          0: broadcast SSID  
-   *          1: hidden SSID,   
-   *           you need to type the exact SSID name in order to connect  
-   *      max_connection - maximum number of connected clients  
-   *          accepts 1 to 4 only  
-   *            
-   */  
   WiFi.softAP(ssid, password);  
    
   Serial.println( "" );  
   Serial.println( "WiFi AP is now running" );  
   Serial.println( "IP address: " );  
   Serial.println( WiFi.softAPIP() );  
+
+
+  pinMode(motor1Pin1, OUTPUT);
+  pinMode(motor1Pin2, OUTPUT);
+  pinMode(motor2Pin1, OUTPUT);
+  pinMode(motor2Pin2, OUTPUT); 
    
   // Start our ESP32 server  
   server.begin();  
@@ -82,7 +58,8 @@
       if (clientData.length() == 0) { //  Now that the clientData is cleared,  
        sendResponse();        //    perform the necessary action  
        updateLED();  
-       updateWebpage();  
+       updateWebpage();
+       DriveMotors();  
        break;  
       } else {  
        clientData = "";       //  First, clear the clientData  
@@ -119,40 +96,46 @@
   // Send the whole HTML  
   client.println("<!DOCTYPE html><html>");  
   client.println("<head>");  
-  client.println("<title>ESP32 WiFi Station</title>");  
+  client.println("<title>ASL AI</title>");  
   client.println("</head>");  
     
   // Web Page Heading  
-  client.println("<body><h1>Simple ESP32 Web Server</h1>");  
+  client.println("<body><h1>ASL AI Robot Control</h1>");  
    
   // Display buttons for Blue LED  
-  client.println("<p>1. Blue LED is " + bluLedState + "</p>");    
-  if (bluLedState == "off") {  
-   client.println("<p><a href=\"/BLUE_LED/on\"><button>Turn ON</button></a></p>");  
-  } else {  
-   client.println("<p><a href=\"/BLUE_LED/off\"><button>Turn OFF</button></a></p>");  
-  }   
+  client.println("<p>Robot satus: " + drivingState + "</p>");    
+
    
   client.print("<hr>");  
     
-  // Display buttons for Green LED  
-  client.println("<p>2. Green LED is " + grnLedState + "</p>");    
-  if (grnLedState == "off") {  
-   client.println("<p><a href=\"/GREEN_LED/on\"><button>Turn ON</button></a></p>");  
-  } else {  
-   client.println("<p><a href=\"/GREEN_LED/off\"><button>Turn OFF</button></a></p>");  
-  }   
-   
-  client.print("<hr>");  
-      
-  // Display buttons for Red LED  
-  client.println("<p>3. Red LED is " + redLedState + "</p>");    
-  if (redLedState == "off") {  
-   client.println("<p><a href=\"/RED_LED/on\"><button>Turn ON</button></a></p>");  
-  } else {  
-   client.println("<p><a href=\"/RED_LED/off\"><button>Turn OFF</button></a></p>");  
-  }  
-   
+//  // Display buttons for Green LED  
+//  client.println("<p></p>");    
+//  if (drivingState == "STOP") {  
+//   client.println("<p><a href=\"/DRIVE/FORWARD\"><button id=\"DRIVE\">FORWARD</button></a></p>");  
+//  }
+//  else if (drivingState == "FORWARD") {
+//   client.println("<p><a href=\"/DRIVE/STOP\"><button id=\"DRIVE\">STOP</button></a></p>");
+//  }
+//  
+//  if (turningState == "RIGHT" || turningState == "LEFT"){
+//    client.println("<p><a href=\"/TURN/STRAIGHT\"><button id=\"TURN\">STRAIGHT</button></a></p>");
+//    if(turningState == "RIGHT"){
+//      client.println("<p><a href=\"/TURN/LEFT\"><button id=\"TURN\">LEFT</button></a></p>");
+//    }
+//    else if(turningState == "LEFT"){
+//      client.println("<p><a href=\"/TURN/RIGHT\"><button id=\"TURN\">RIGHT</button></a></p>");
+//    }
+//  }
+//
+//  if (turningState == "STRAIGHT") {
+//    client.println("<p><a href=\"/TURN/LEFT\"><button id=\"TURN\">LEFT</button></a></p>");
+//    client.println("<p><a href=\"/TURN/RIGHT\"><button id=\"TURN\">RIGHT</button></a></p>");
+//  }
+  client.println("<p><a href=\"/DRIVE/STOP\"><button id=\"DRIVE\">STOP</button></a></p>");
+  client.println("<p><a href=\"/DRIVE/FORWARD\"><button id=\"DRIVE\">FORWARD</button></a></p>");
+  client.println("<p><a href=\"/TURN/LEFT\"><button id=\"TURN\">LEFT</button></a></p>");
+  client.println("<p><a href=\"/TURN/RIGHT\"><button id=\"TURN\">RIGHT</button></a></p>");
+  
   client.println("</body></html>");  
   client.println();  
  }  
@@ -161,29 +144,32 @@
   // In here we will check the HTTP request of the connected client  
   //  using the HTTP GET function,  
   //  Then turns the LED on / off according to the HTTP request  
-  if    (http.indexOf("GET /BLUE_LED/on") >= 0) {  
-   Serial.println("Blue LED on");  
-   bluLedState = "on";  
-   digitalWrite(BLUE_LED, HIGH);  
-  } else if (http.indexOf("GET /BLUE_LED/off") >= 0) {  
-   Serial.println("Blue LED off");  
-   bluLedState = "off";  
-   digitalWrite(BLUE_LED, LOW);  
-  } else if (http.indexOf("GET /GREEN_LED/on") >= 0) {  
-   Serial.println("Green LED on");  
-   grnLedState = "on";  
-   digitalWrite(GREEN_LED, HIGH);  
-  } else if (http.indexOf("GET /GREEN_LED/off") >= 0) {  
-   Serial.println("Green LED off");  
-   grnLedState = "off";  
-   digitalWrite(GREEN_LED, LOW);  
-  } else if (http.indexOf("GET /RED_LED/on") >= 0) {  
-   Serial.println("Red LED on");  
-   redLedState = "on";  
-   digitalWrite(RED_LED, HIGH);  
-  } else if (http.indexOf("GET /RED_LED/off") >= 0) {  
-   Serial.println("Red LED off");  
-   redLedState = "off";  
-   digitalWrite(RED_LED, LOW);  
-  }  
+  if (http.indexOf("GET /DRIVE/FORWARD") >= 0) {
+    drivingState = "FORWARD";  
+  } else if (http.indexOf("GET /DRIVE/STOP") >= 0) {
+    drivingState = "STOP";  
+  } else if (http.indexOf("GET /TURN/LEFT") >= 0) {
+    drivingState = "LEFT";  
+  } else if (http.indexOf("GET /TURN/RIGHT") >= 0) {
+    drivingState = "RIGHT";  
+  } else if (http.indexOf("GET /TURN/STRAIGHT") >= 0) {
+    drivingState = "STRAIGHT";  
+  }
  }  
+
+ void DriveMotors() {
+    if(drivingState == "FORWARD"){
+      //Forward
+      digitalWrite(motor1Pin1, LOW);
+      digitalWrite(motor1Pin2, HIGH);
+      digitalWrite(motor2Pin1, LOW);
+      digitalWrite(motor2Pin2, HIGH);
+    }
+    else if(drivingState == "STOP"){
+      //Stop
+      digitalWrite(motor1Pin1, LOW);
+      digitalWrite(motor1Pin2, LOW);
+      digitalWrite(motor2Pin1, LOW);
+      digitalWrite(motor2Pin2, LOW);
+    }
+ }

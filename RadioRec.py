@@ -15,7 +15,7 @@ import spidev
 pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]
 
 radio2 = NRF24(GPIO, spidev.SpiDev())
-radio2.begin(0, 17)
+radio2.begin(0, 3)
 
 radio2.setRetries(15,15)
 
