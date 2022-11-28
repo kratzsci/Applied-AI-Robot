@@ -13,7 +13,6 @@
  String grnLedState = "off";  
  String redLedState = "off";
  String drivingState = "STOP";
- String turningState = "STRAIGHT";  
   
   // Motor A
   int motor1Pin1 = 15; 
@@ -107,34 +106,11 @@
 
    
   client.print("<hr>");  
-    
-//  // Display buttons for Green LED  
-//  client.println("<p></p>");    
-//  if (drivingState == "STOP") {  
-//   client.println("<p><a href=\"/DRIVE/FORWARD\"><button id=\"DRIVE\">FORWARD</button></a></p>");  
-//  }
-//  else if (drivingState == "FORWARD") {
-//   client.println("<p><a href=\"/DRIVE/STOP\"><button id=\"DRIVE\">STOP</button></a></p>");
-//  }
-//  
-//  if (turningState == "RIGHT" || turningState == "LEFT"){
-//    client.println("<p><a href=\"/TURN/STRAIGHT\"><button id=\"TURN\">STRAIGHT</button></a></p>");
-//    if(turningState == "RIGHT"){
-//      client.println("<p><a href=\"/TURN/LEFT\"><button id=\"TURN\">LEFT</button></a></p>");
-//    }
-//    else if(turningState == "LEFT"){
-//      client.println("<p><a href=\"/TURN/RIGHT\"><button id=\"TURN\">RIGHT</button></a></p>");
-//    }
-//  }
-//
-//  if (turningState == "STRAIGHT") {
-//    client.println("<p><a href=\"/TURN/LEFT\"><button id=\"TURN\">LEFT</button></a></p>");
-//    client.println("<p><a href=\"/TURN/RIGHT\"><button id=\"TURN\">RIGHT</button></a></p>");
-//  }
+  
   client.println("<p><a href=\"/DRIVE/STOP\"><button id=\"DRIVE\">STOP</button></a></p>");
-  client.println("<p><a href=\"/DRIVE/FORWARD\"><button id=\"DRIVE\">FORWARD</button></a></p>");
-  client.println("<p><a href=\"/TURN/LEFT\"><button id=\"TURN\">LEFT</button></a></p>");
-  client.println("<p><a href=\"/TURN/RIGHT\"><button id=\"TURN\">RIGHT</button></a></p>");
+  client.println("<p><a href=\"/DRIVE/FORWARD\"><button id=\"STOP\">FORWARD</button></a></p>");
+  client.println("<p><a href=\"/TURN/LEFT\"><button id=\"LEFT\">LEFT</button></a></p>");
+  client.println("<p><a href=\"/TURN/RIGHT\"><button id=\"RIGHT\">RIGHT</button></a></p>");
   
   client.println("</body></html>");  
   client.println();  
