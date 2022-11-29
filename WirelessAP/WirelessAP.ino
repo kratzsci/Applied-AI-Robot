@@ -17,8 +17,8 @@
   // Motor A
   int motor1Pin1 = 15; 
   int motor1Pin2 = 2;
-  int motor2Pin1 = 4;
-  int motor2Pin2 = 5;  
+  int motor2Pin1 = 5; 
+  int motor2Pin2 = 18;  
   
  void setup() {  
   Serial.begin(115200);  
@@ -36,7 +36,7 @@
   pinMode(motor1Pin1, OUTPUT);
   pinMode(motor1Pin2, OUTPUT);
   pinMode(motor2Pin1, OUTPUT);
-  pinMode(motor2Pin2, OUTPUT); 
+  pinMode(motor2Pin2, OUTPUT);
    
   // Start our ESP32 server  
   server.begin();  
@@ -56,7 +56,7 @@
                       //  it means end of http request from client  
       if (clientData.length() == 0) { //  Now that the clientData is cleared,  
        sendResponse();        //    perform the necessary action  
-       updateLED();  
+       updateDirection();  
        updateWebpage();
        DriveMotors();  
        break;  
@@ -107,19 +107,18 @@
    
   client.print("<hr>");  
   
-  client.println("<p><a href=\"/DRIVE/STOP\"><button id=\"DRIVE\">STOP</button></a></p>");
-  client.println("<p><a href=\"/DRIVE/FORWARD\"><button id=\"STOP\">FORWARD</button></a></p>");
+  
+  client.println("<p><a href=\"/DRIVE/FORWARD\"><button id=\"DRIVE\">FORWARD</button></a></p>");
+  client.println("<p><a href=\"/DRIVE/STOP\"><button id=\"STOP\">STOP</button></a></p>");
   client.println("<p><a href=\"/TURN/LEFT\"><button id=\"LEFT\">LEFT</button></a></p>");
   client.println("<p><a href=\"/TURN/RIGHT\"><button id=\"RIGHT\">RIGHT</button></a></p>");
+  client.println("<p><a href=\"/DRIVE/BACKWARD\"><button id=\"BACKWARD\">BACKWARD</button></a></p>");
   
   client.println("</body></html>");  
   client.println();  
  }  
    
- void updateLED() {  
-  // In here we will check the HTTP request of the connected client  
-  //  using the HTTP GET function,  
-  //  Then turns the LED on / off according to the HTTP request  
+ void updateDirection() {  
   if (http.indexOf("GET /DRIVE/FORWARD") >= 0) {
     drivingState = "FORWARD";  
   } else if (http.indexOf("GET /DRIVE/STOP") >= 0) {
@@ -128,21 +127,63 @@
     drivingState = "LEFT";  
   } else if (http.indexOf("GET /TURN/RIGHT") >= 0) {
     drivingState = "RIGHT";  
-  } else if (http.indexOf("GET /TURN/STRAIGHT") >= 0) {
-    drivingState = "STRAIGHT";  
+  } else if (http.indexOf("GET /DRIVE/BACKWARD") >= 0) {
+    drivingState = "BACKWARD";  
   }
  }  
 
  void DriveMotors() {
-    if(drivingState == "FORWARD"){
+    if(drivingState == "BACKWARD"){
       //Forward
       digitalWrite(motor1Pin1, LOW);
       digitalWrite(motor1Pin2, HIGH);
       digitalWrite(motor2Pin1, LOW);
       digitalWrite(motor2Pin2, HIGH);
+      delay(1000);
+      drivingState = "STOP";
+      digitalWrite(motor1Pin1, LOW);
+      digitalWrite(motor1Pin2, LOW);
+      digitalWrite(motor2Pin1, LOW);
+      digitalWrite(motor2Pin2, LOW);  
     }
     else if(drivingState == "STOP"){
       //Stop
+      digitalWrite(motor1Pin1, LOW);
+      digitalWrite(motor1Pin2, LOW);
+      digitalWrite(motor2Pin1, LOW);
+      digitalWrite(motor2Pin2, LOW);
+    }
+    else if(drivingState == "FORWARD"){
+      digitalWrite(motor1Pin1, HIGH);
+      digitalWrite(motor1Pin2, LOW); 
+      digitalWrite(motor2Pin1, HIGH);
+      digitalWrite(motor2Pin2, LOW);
+      delay(1000);
+      drivingState = "STOP";
+      digitalWrite(motor1Pin1, LOW);
+      digitalWrite(motor1Pin2, LOW);
+      digitalWrite(motor2Pin1, LOW);
+      digitalWrite(motor2Pin2, LOW);    
+    }
+    else if(drivingState == "LEFT"){
+      digitalWrite(motor1Pin1, HIGH);
+      digitalWrite(motor1Pin2, LOW); 
+      digitalWrite(motor2Pin1, LOW);
+      digitalWrite(motor2Pin2, HIGH);
+      delay(500);
+      drivingState = "STOP";
+      digitalWrite(motor1Pin1, LOW);
+      digitalWrite(motor1Pin2, LOW);
+      digitalWrite(motor2Pin1, LOW);
+      digitalWrite(motor2Pin2, LOW);
+    }
+    else if(drivingState == "RIGHT"){
+      digitalWrite(motor1Pin1, LOW);
+      digitalWrite(motor1Pin2, HIGH); 
+      digitalWrite(motor2Pin1, HIGH);
+      digitalWrite(motor2Pin2, LOW);
+      delay(500);
+      drivingState = "STOP";
       digitalWrite(motor1Pin1, LOW);
       digitalWrite(motor1Pin2, LOW);
       digitalWrite(motor2Pin1, LOW);
