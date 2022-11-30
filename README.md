@@ -22,6 +22,13 @@ motors.py - manages the motors for movement of the robot
 - TT Motor 200RPM
 - L298N Motor Driver
 
+# Controls
+A -> Stop
+B -> Forward
+C -> Backward
+Y -> Right
+L -> Left
+
 # Trainer
 https://teachablemachine.withgoogle.com/train/image
 
