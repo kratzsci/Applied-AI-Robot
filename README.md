@@ -23,10 +23,10 @@ motors.py - manages the motors for movement of the robot
 - L298N Motor Driver
 
 # Controls
-A -> Stop
-B -> Forward
-C -> Backward
-Y -> Right
+A -> Stop  
+B -> Forward  
+C -> Backward  
+Y -> Right  
 L -> Left
 
 # Trainer
