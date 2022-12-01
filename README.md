@@ -2,7 +2,16 @@
 
 A small, two-wheeled robot that is controlled wirelessly by hand gestures. The gestures are based on American Sign Language (ASL) fore ease of use and available datasets. The AI currently runs on a Windows PC and uses a webserver hosted by the robot to convey the commands. The web server has different buttons for the currently available instructions (Stop, Forward, Backward, Left, Right).
 
-# L298N motor controller
+# Controls
+
+## Gestures
+A -> Stop  
+B -> Forward  
+C -> Backward  
+Y -> Right  
+L -> Left
+
+## L298N motor controller
 
 | Input1  | Input2  | Spinning Direction |
 | ------- | ------- | ------------------ |
@@ -11,17 +20,12 @@ A small, two-wheeled robot that is controlled wirelessly by hand gestures. The g
 | Low(0)  |	High(1) | Backward           |
 | High(1) |	High(1) | Motor OFF          |
 
-# Parts List
+## Parts List
 - ESP32 Development board
 - TT Motor 200RPM
 - L298N Motor Driver
 
-# Controls
-A -> Stop  
-B -> Forward  
-C -> Backward  
-Y -> Right  
-L -> Left
+
 
 # Trainer
 https://teachablemachine.withgoogle.com/train/image
