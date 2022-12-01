@@ -4,6 +4,13 @@ Self-driving robot with AI controls
 
 File sturcture:
 motors.py - manages the motors for movement of the robot
+```bash
+|--ESP32
+|  |--Motors
+|  |  |--Motors.ino
+|  |--WirelessAP
+|  |  |--WirelessAP.ino
+```
 
 # L298N motor controller
 
