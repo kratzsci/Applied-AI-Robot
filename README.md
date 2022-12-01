@@ -11,7 +11,9 @@ C -> Backward
 Y -> Right  
 L -> Left
 
-![ASL Gestures](Images/ASL-CTRL.png)  
+![ASL Gestures](Images/ASL-CTRL.png)   
+![Detection GIF](Images/ASL-Detection.gif)  
+
 
 ## L298N motor controller
 
