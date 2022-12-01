@@ -11,6 +11,8 @@ C -> Backward
 Y -> Right  
 L -> Left
 
+![ASL Gestures](Images/ASL-CTRL.png)  
+
 ## L298N motor controller
 
 | Input1  | Input2  | Spinning Direction |
