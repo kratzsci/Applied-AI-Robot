@@ -1,6 +1,6 @@
 # Applied-AI-Robot                                                             
 
-Self-driving robot with AI controls
+A small, two-wheeled robot that is controlled wirelessly by hand gestures. The gestures are based on American Sign Language (ASL) fore ease of use and available datasets. The AI currently runs on a Windows PC and uses a webserver hosted by the robot to convey the commands. The web server has different buttons for the currently available instructions (Stop, Forward, Backward, Left, Right).
 
 # L298N motor controller
 
@@ -12,10 +12,7 @@ Self-driving robot with AI controls
 | High(1) |	High(1) | Motor OFF          |
 
 # Parts List
-- Raspberry Pi Pico RP2040
 - ESP32 Development board
-- Teensy 4.0
-- NRF24L01 RF Transceiver
 - TT Motor 200RPM
 - L298N Motor Driver
 
@@ -29,9 +26,6 @@ L -> Left
 # Trainer
 https://teachablemachine.withgoogle.com/train/image
 
-# Possible implementation on Pi
-https://stackoverflow.com/questions/55585515/how-to-load-keras-model-onto-raspberry-pi
+#Future Development
 
-# References
-RF library and code:
-https://github.com/BLavery/lib_nrf24
+In continued development of this project it would be great to transfer the AI from a PC to its own, dedicated embedded environemtn. This would allow the remote to be more portable, energy efficient, and compact. This change would require some changes to the controcl mechanism too, either implementing Bluetooth communication or RF.
