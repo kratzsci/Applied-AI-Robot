@@ -31,4 +31,4 @@ L -> Left
 
 # Future Development
 
-In continued development of this project it would be great to transfer the AI from a PC to its own, dedicated embedded environemtn. This would allow the remote to be more portable, energy efficient, and compact. This change would require some changes to the controcl mechanism too, either implementing Bluetooth communication or RF.
+In continued development of this project it would be great to transfer the AI from a PC to its own, dedicated embedded environment. This would allow the remote to be more portable, energy efficient, and compact. This change would require some changes to the control mechanism too, either implementing Bluetooth communication or RF.
