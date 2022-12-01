@@ -29,11 +29,6 @@ L -> Left
 - TT Motor 200RPM
 - L298N Motor Driver
 
-
-
-# Trainer
-https://teachablemachine.withgoogle.com/train/image
-
 # Future Development
 
 In continued development of this project it would be great to transfer the AI from a PC to its own, dedicated embedded environemtn. This would allow the remote to be more portable, energy efficient, and compact. This change would require some changes to the controcl mechanism too, either implementing Bluetooth communication or RF.
